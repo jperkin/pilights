@@ -1,0 +1,31 @@
+#!/bin/sh
+#
+# An implementation of a single set of traffic lights.
+#
+# This is part of the 'pilights' package available here:
+#
+#   https://github.com/jperkin/pilights
+#
+
+. ./pilights
+
+while true
+do
+    # Go for 8 seconds.
+    turn green on
+    wait 8
+
+    # Transition to stop and wait for 6 seconds.
+    turn green off
+    turn yellow on
+    wait 2
+    turn yellow off
+    turn red on
+    wait 6
+
+    # Transition back to go and run through the loop again.
+    turn yellow on
+    wait 2
+    turn red off
+    turn yellow off
+done

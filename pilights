@@ -1,0 +1,135 @@
+#!/bin/sh
+#
+# This is a simple set of functions for turning GPIO-attached LEDs on and off,
+# specifically those set up as traffic lights.
+#
+# The aim is to make it as simple as possible for children to understand what
+# is happening, and to that end we try to be helpful and make commands
+# clear, case-insensitive, as well as handle additional text.
+#
+# There are two exported functions, 'turn' and 'wait', which can be used like
+# this:
+#
+#   turn red on
+#   wait 2
+#   turn yellow on
+#   wait 2
+#   turn red off
+#   turn yellow off
+#   turn green on
+#
+# 'turn' accepts an optional 'light' argument and 'wait' ignores anything past
+# its first argument, so you could also use:
+#
+#   TURN RED LIGHT ON
+#   WAIT 2 SECONDS
+#   TURN YELLOW LIGHT ON
+#   ...
+#
+# which is perhaps more readable for children ;)
+#
+# This is part of the 'pilights' package available here:
+#
+#   https://github.com/jperkin/pilights
+#
+
+
+#
+# Set these to the pins you have chosen.  You shouldn't need to modify
+# anything else below here.
+#
+RED=17
+YELLOW=18
+GREEN=21
+#
+# Support for two sets.  If you don't have these then comment them out
+# so that the pins aren't configured regardless.
+#
+RED1=${RED}
+YELLOW1=${YELLOW}
+GREEN1=${GREEN}
+RED2=22
+YELLOW2=23
+GREEN2=24
+
+GPIO=/sys/class/gpio
+
+#
+# This is our shell function for turning a light on or off.
+#
+#    turn <light> [light] <on|off>
+#
+# The light name and action are both case-insensitive.
+#
+turn()
+{
+    colour=$1; shift
+    action=$1; shift
+
+    case "${action}" in
+    [Ll][Ii][Gg][Hh][Tt])
+        action=$1; shift
+        ;;
+    esac
+
+    # We default to off, and only turn a light on if we get 'on'.
+    val=0
+    case "${action}" in
+    [Oo][Nn])
+        val=1
+        ;;
+    esac
+
+    # Match up the colour
+    case "${colour}" in
+    [Rr][Ee][Dd]|[Rr][Ee][Dd]1)
+        echo ${val} >${GPIO}/gpio${RED}/value
+        ;;
+    [Yy][Ee][Ll][Ll][Oo][Ww]|[Yy][Ee][Ll][Ll][Oo][Ww]1)
+        echo ${val} >${GPIO}/gpio${YELLOW}/value
+        ;;
+    [Gg][Rr][Ee][Ee][Nn]|[Gg][Rr][Ee][Ee][Nn]1)
+        echo ${val} >${GPIO}/gpio${GREEN}/value
+        ;;
+    [Rr][Ee][Dd]2)
+        echo ${val} >${GPIO}/gpio${RED2}/value
+        ;;
+    [Yy][Ee][Ll][Ll][Oo][Ww]2)
+        echo ${val} >${GPIO}/gpio${YELLOW2}/value
+        ;;
+    [Gg][Rr][Ee][Ee][Nn]2)
+        echo ${val} >${GPIO}/gpio${GREEN2}/value
+        ;;
+    *)
+        echo "Sorry, we don't have a ${colour} light!"
+        ;;
+    esac
+}
+alias TURN=turn
+
+#
+# This is just a wrapper for 'sleep', using a verb which is perhaps more
+# intuitive for children to understand.  For shell hackers in the audience,
+# yes this overrides the 'wait' shell builtin, but we're unlikely to need to
+# use advanced job control in these programs ;)
+#
+wait()
+{
+    seconds=$1; shift
+    sleep ${seconds}
+}
+alias WAIT=wait
+
+#
+# Set up the pins.  First we allow them to be used by writing to the 'export'
+# file, and then we configure them as outputs by writing 'out' to the
+# 'direction' file.  Finally we start with them all turned off
+#
+for i in ${RED} ${YELLOW} ${GREEN} ${RED2} ${YELLOW2} ${GREEN2}
+do
+    if [ ! -e ${GPIO}/gpio${i} ]; then
+        echo $i >${GPIO}/export
+    fi
+    echo out >${GPIO}/gpio${i}/direction
+    echo 0 >${GPIO}/gpio${i}/value
+done

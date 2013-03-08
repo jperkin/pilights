@@ -1,0 +1,46 @@
+#!/bin/sh
+#
+# An implementation of a dual set of traffic lights.
+#
+# This is part of the 'pilights' package available here:
+#
+#   https://github.com/jperkin/pilights
+#
+
+. ./pilights
+
+while true
+do
+    # Set 1 go, set 2 stop
+    turn green on
+    turn red2 on
+    wait 8
+
+    # Set 1 transition to stop
+    turn green off
+    turn yellow on
+    wait 2
+    turn yellow off
+    turn red on
+
+    # Set 2 transition to go
+    turn yellow2 on
+    wait 2
+    turn red2 off
+    turn yellow2 off
+    turn green2 on
+    wait 8
+
+    # Set 2 transition to stop
+    turn green2 off
+    turn yellow2 on
+    wait 2
+    turn yellow2 off
+    turn red2 on
+
+    # Set 1 transition to go
+    turn yellow on
+    wait 2
+    turn red off
+    turn yellow off
+done

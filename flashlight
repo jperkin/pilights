@@ -1,0 +1,26 @@
+#!/bin/sh
+#
+# Flash the red LED at a given interval.
+#
+# Without any arguments the light will flash for 5 hundredths of a second,
+# or 20Hz (100/5).  If you supply an argument (e.g. 'flashlight 0.01') then
+# the light will flash at the given speed.
+#
+# This is part of the 'pilights' package available here:
+#
+#   https://github.com/jperkin/pilights
+#
+
+. ./pilights
+
+interval=0.05
+if [ -n "$1" ]; then
+    interval=$1; shift
+fi
+
+while true
+do
+    turn red on
+    wait ${interval}
+    turn red off
+done

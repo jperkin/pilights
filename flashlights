@@ -1,0 +1,32 @@
+#!/bin/sh
+#
+# Flash three lights at a given interval.
+#
+# Without any arguments the lights will flash for 5 hundredths of a second,
+# or 20Hz (100/5).  If you supply an argument (e.g. 'flashlights 0.01') then
+# the lights will flash at the given speed.
+#
+# This is part of the 'pilights' package available here:
+#
+#   https://github.com/jperkin/pilights
+#
+
+. ./pilights
+
+interval=0.05
+if [ -n "$1" ]; then
+    interval=$1; shift
+fi
+
+while true
+do
+    turn red on
+    wait ${interval}
+    turn red off
+    turn yellow on
+    wait ${interval}
+    turn yellow off
+    turn green on
+    wait ${interval}
+    turn green off
+done
