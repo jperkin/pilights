@@ -121,6 +121,13 @@ wait()
 alias WAIT=wait
 
 #
+# A more intuitive alias for 'while true; do'
+#
+alias repeat='while true; do'
+alias REPEAT=repeat
+alias DONE=done
+
+#
 # Set up the pins.  First we allow them to be used by writing to the 'export'
 # file, and then we configure them as outputs by writing 'out' to the
 # 'direction' file.  Finally we start with them all turned off

@@ -41,6 +41,15 @@ arguments for optional clarity.  The above could instead be written like this:
 
 for that retro feel ;)
 
+There is also a simple alias for a 'while true' loop:
+
+    repeat
+      turn red on
+      wait 0.2
+      turn red off
+      wait 0.2
+    done
+
 ## Example Scripts
 
 A number of example scripts are provided.
