@@ -23,4 +23,5 @@ do
     turn red on
     wait ${interval}
     turn red off
+    wait ${interval}
 done
